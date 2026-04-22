@@ -1,0 +1,16 @@
+[project]
+name = "dezc-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "google-cloud-storage>=3.10.1",
+    "meteostat>=2.1.4",
+    "pandas>=2.2,<3.0",
+]
+
+[dependency-groups]
+dev = [
+    "certifi>=2026.2.25",
+]

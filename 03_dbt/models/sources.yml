@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw_weather_data
+    database: "{{ env_var('DBT_GCP_PROJECT') }}"
+    schema: "{{ env_var('DBT_DATASET') }}"
+    tables:
+      - name: capitals
+      - name: stations
+      - name: weather_data

@@ -1,0 +1,21 @@
+services:
+  ingest:
+    build: ./01_ingest
+    volumes:
+      - ./credentials:/app/config:ro
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/config/credentials.json
+
+  spark:
+    build: ./02_spark
+    volumes:
+      - ./credentials:/app/config:ro
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/config/credentials.json
+
+  dbt:
+    build: ./03_dbt
+    volumes:
+      - ./credentials:/app/config:ro
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/config/credentials.json

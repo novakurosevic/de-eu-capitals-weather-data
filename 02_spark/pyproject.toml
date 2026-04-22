@@ -1,0 +1,18 @@
+[project]
+name = "02-spark"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pyspark<3.5",
+    "pyarrow",
+    "pandas",
+    "google-cloud-storage",
+    "google-cloud-bigquery"
+]   
+
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+]
