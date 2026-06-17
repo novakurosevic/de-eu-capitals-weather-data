@@ -39,10 +39,51 @@
 
 ## 📖 1. Project Overview
 
-The goal of this project is to generate a structured and insightful **weather report** based on historical data for Europian capitals.
+The goal of this project is to generate a structured and insightful **weather report** based on historical data for European capitals.
 
 To achieve this, we first collect weather data from **[Meteostat](https://meteostat.net/)** using their Python library. Meteostat provides a convenient way to access historical weather data for various locations around the world. While this project uses a simplified subset of their capabilities, the platform itself is powerful enough to support much more advanced use cases — from detailed analytics to full-scale data-driven applications built on top of their API.
 
+
+### 🔄 Pipeline Overview
+
+```
+🌦️ Meteostat
+       │
+       ▼
+📄 CSV
+       │
+       ▼
+☁️ Google Cloud Storage
+       │
+       ▼
+⚡ Apache Spark
+       │
+       ▼
+🗂️ Parquet
+       │
+       ▼
+📊 BigQuery
+       │
+       ▼
+🔷 dbt Models
+       │
+       ▼
+🐍 Python Report Generator
+       │
+       ▼
+📕 PDF Weather Report
+       │
+       ▼
+☁️ Cloud Storage
+```
+
+
+### 🏗️ Pipeline Architecture
+
+![Pipeline Architecture](./images/pipeline_architecture.png)
+
+
+The diagram below illustrates the complete end-to-end data flow, from Meteostat ingestion to final PDF report generation.
 
 
 ---
@@ -64,7 +105,7 @@ The project is organized as a small data pipeline composed of three main stages:
 * Converted into **Parquet format** (optimized for analytics)
 * Final datasets are loaded into **BigQuery**
 
-### 2.3. Data Modeling & Reporting (`03_dbt`)
+### 2.3. Data Modeling (`03_dbt`)
 
 * **dbt** is used to create analytical models (views) in BigQuery
 * These models represent the final, structured data
