@@ -19,7 +19,7 @@ from pathlib import Path
 
 # Check are config files set.
 config_directory = Path("/app/config")
-required_files = ["config.json", "credentials.json"]
+required_files = ["config.json"]
 
 missing_files = []
 
@@ -83,11 +83,12 @@ with open("config/config.json") as f:
 
 
 bucket_name = config["gcs"]["bucket"]
+project_id = config["gcs"]["bigquery_project"]
 
 
 capitals_list = create_capitals_list()
 
-client = storage.Client()
+client = storage.Client(project=project_id)
 bucket = client.bucket(bucket_name)
 
 for one_capital_chunk in capitals_list:

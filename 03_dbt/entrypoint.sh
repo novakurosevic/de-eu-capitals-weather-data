@@ -12,8 +12,8 @@ CONFIG_PATH="/app/config/config.json"
 # -------------------------
 # Docker
 # -------------------------
-export DBT_GCP_PROJECT=$(jq -r '.gcs["big-query-project"]' "$CONFIG_PATH")
-export DBT_DATASET=$(jq -r '.gcs["big-query-dataset"]' "$CONFIG_PATH")
+export DBT_GCP_PROJECT=$(jq -r '.gcs["bigquery_project"]' "$CONFIG_PATH")
+export DBT_DATASET=$(jq -r '.gcs["bigquery_dataset"]' "$CONFIG_PATH")
 export BQ_REGION=$(jq -r '.gcs["region"]' "$CONFIG_PATH")
 export GCS_BUCKET=$(jq -r '.gcs["bucket"]' "$CONFIG_PATH")
 export DBT_THREADS="1"

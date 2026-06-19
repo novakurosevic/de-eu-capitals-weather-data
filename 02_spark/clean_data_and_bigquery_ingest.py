@@ -12,7 +12,7 @@ start_time = time.perf_counter()
 
 # Check are config files set.
 config_directory = Path("/app/config")
-required_files = ["config.json", "credentials.json"]
+required_files = ["config.json"]
 
 missing_files = []
 
@@ -49,6 +49,7 @@ def retry(operation, max_retries=3):
 def write_weather_data():
     df.write \
         .format("bigquery") \
+        .option("parentProject", big_query_project) \
         .option("table", f"{big_query_project}.{big_query_dataset}.weather_data") \
         .option("temporaryGcsBucket", bucket_name) \
         .mode("overwrite") \
@@ -57,6 +58,7 @@ def write_weather_data():
 def write_stations_data():
     df_stations.write \
         .format("bigquery") \
+        .option("parentProject", big_query_project) \
         .option("table", f"{big_query_project}.{big_query_dataset}.stations") \
         .option("temporaryGcsBucket", bucket_name) \
         .mode("overwrite") \
@@ -65,6 +67,7 @@ def write_stations_data():
 def write_capitals_data():
     df_capitals.write \
         .format("bigquery") \
+        .option("parentProject", big_query_project) \
         .option("table", f"{big_query_project}.{big_query_dataset}.capitals") \
         .option("temporaryGcsBucket", bucket_name) \
         .mode("overwrite") \
@@ -81,8 +84,9 @@ spark = ( SparkSession.builder
     )
     .config("spark.hadoop.fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
     .config("spark.hadoop.fs.AbstractFileSystem.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS")
-    .config("spark.hadoop.google.cloud.auth.service.account.enable", "true")
-    .config("spark.hadoop.google.cloud.auth.service.account.json.keyfile", os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
+    # For config.json file
+    # .config("spark.hadoop.google.cloud.auth.service.account.enable", "true")
+    # .config("spark.hadoop.google.cloud.auth.service.account.json.keyfile", os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
     .getOrCreate()
 )
 
@@ -96,21 +100,6 @@ spark._jsc.hadoopConfiguration().set(
     "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS"
 )
 
-# Check are config files set.
-config_directory = Path("/app/config")
-required_files = ["config.json", "credentials.json"]
-
-missing_files = []
-
-for file_name in required_files:
-    if not (config_directory / file_name).exists():
-        missing_files.append(file_name)
-
-if missing_files:
-    raise FileNotFoundError(
-        f"Missing required configuration files: {missing_files}"
-    )
-
 p = config_directory / 'config.json'
 
 with open(p) as f:
@@ -118,8 +107,10 @@ with open(p) as f:
 
 bucket_name = str(config["gcs"]["bucket"])
 
-big_query_project = str(config["gcs"]["big-query-project"])
-big_query_dataset = str(config["gcs"]["big-query-dataset"])
+big_query_project = str(config["gcs"]["bigquery_project"])
+big_query_dataset = str(config["gcs"]["bigquery_dataset"])
+# Add project to spark
+spark.conf.set("parentProject", big_query_project)
 
 # Prepare weather data
 print("[SPARK] Started weather data conversion")
@@ -216,6 +207,7 @@ df_stations = spark.read \
     .csv(file_path)
 
 df_stations.coalesce(1).write \
+    .option("parentProject", big_query_project) \
     .mode("overwrite") \
     .parquet(f"gs://{bucket_name}/result_parquet/stations/")
 

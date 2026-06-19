@@ -1,21 +1,32 @@
 services:
+  terraform:
+      image: hashicorp/terraform:1.8
+      working_dir: /workspace
+      volumes:
+        - ./terraform:/workspace
+        - ${HOME}/.config/gcloud:/root/.config/gcloud:ro
+        
   ingest:
     build: ./01_ingest
     volumes:
       - ./credentials:/app/config:ro
+      - ${HOME}/.config/gcloud:/root/.config/gcloud:ro
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/config/credentials.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json
 
   spark:
     build: ./02_spark
     volumes:
       - ./credentials:/app/config:ro
+      - ${HOME}/.config/gcloud:/root/.config/gcloud:ro
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/config/credentials.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json
 
   dbt:
     build: ./03_dbt
     volumes:
       - ./credentials:/app/config:ro
+      - ${HOME}/.config/gcloud:/root/.config/gcloud:ro
+      - ./output:/app/output
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/config/credentials.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json

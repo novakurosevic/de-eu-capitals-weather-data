@@ -3,9 +3,8 @@ dbt_bigquery:
   outputs:
     dev:
       type: bigquery
-      method: service-account
+      method: oauth
       project: "{{ env_var('DBT_GCP_PROJECT') }}"
       dataset: "{{ env_var('DBT_DATASET') }}"
       location: "{{ env_var('BQ_REGION') }}"
-      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
       threads: "{{ env_var('DBT_THREADS') | as_number }}"

@@ -15,7 +15,7 @@ import os
 
 # Check are config files set.
 config_directory = Path("/app/config")
-required_files = ["config.json", "credentials.json"]
+required_files = ["config.json"]
 
 missing_files = []
 
@@ -34,7 +34,8 @@ PROJECT_ID = os.environ.get("DBT_GCP_PROJECT")
 DATASET = os.environ.get("DBT_DATASET")
 
 BUCKET_NAME = os.environ.get("GCS_BUCKET")
-DESTINATION_PATH = os.environ.get("GCS_REPORT_PATH", "reports/report.pdf")
+GCS_DESTINATION_PATH = os.environ.get("GCS_REPORT_PATH", "reports/report.pdf")
+LOCAL_DESTINATION_PATH = "/app/output/report.pdf"
 
 
 MODELS = [
@@ -83,7 +84,7 @@ class NumberedCanvas(canvas.Canvas):
         )
 
 client = bigquery.Client(project=PROJECT_ID)
-storage_client = storage.Client()
+storage_client = storage.Client(project=PROJECT_ID)
 
 styles = getSampleStyleSheet()
 
@@ -221,8 +222,14 @@ buffer.seek(0)
 
 # Upload from buffer
 bucket = storage_client.bucket(BUCKET_NAME)
-blob = bucket.blob(DESTINATION_PATH)
+blob = bucket.blob(GCS_DESTINATION_PATH)
 
 blob.upload_from_file(buffer, content_type="application/pdf")
 
-print(f"[DBT] Uploaded to gs://{BUCKET_NAME}/{DESTINATION_PATH}")
+print(f"[DBT] Uploaded to gs://{BUCKET_NAME}/{GCS_DESTINATION_PATH}")
+
+# Save report to local directory
+blob.download_to_filename(LOCAL_DESTINATION_PATH)
+print(f"[DBT] Report saved locally: {LOCAL_DESTINATION_PATH}")
+
+
