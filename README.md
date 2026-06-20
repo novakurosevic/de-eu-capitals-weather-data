@@ -37,6 +37,10 @@ This project builds a complete Data Engineering pipeline that collects historica
 
 The goal is to demonstrate a realistic end-to-end cloud data platform using modern Data Engineering tools and practices.
 
+### 🏗️ Architecture Overview
+
+![Architecture](./images/architecture_v1.1.png)
+
 ---
 
 ## 1.1 Data Source
@@ -212,9 +216,9 @@ weather-project-123456
 ## 3.3 Clone Repository
 
 ```bash
-git clone https://github.com/your-repository.git
+git clone https://github.com/novakurosevic/de-eu-capitals-weather-data.git
 
-cd your-repository
+cd de-eu-capitals-weather-data
 ```
 
 ---
